@@ -1,17 +1,11 @@
-
-
-
 export interface Board {
-   id:string;
-   title:string;
-   description:string;
-   status: BoardStatus
-
-
+  id: string;
+  title: string;
+  description: string;
+  status: BoardStatus;
 }
 
 export enum BoardStatus {
-
-    PUBLIC = 'PUBLIC',
-    PRIVATE = 'PRIVATAE'
+  PUBLIC = 'PUBLIC',
+  PRIVATE = 'PRIVATAE',
 }
