@@ -1,3 +1,4 @@
+
 import { Injectable } from '@nestjs/common';
 import { Board, BoardStatus } from './board.model';
 //id는 db에서 유니크한 값이므로 아직 db를 사용하지 않아 임시로 만들어 유니크값을준다
