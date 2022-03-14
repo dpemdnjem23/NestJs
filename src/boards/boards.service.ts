@@ -29,4 +29,15 @@ export class BoardsService {
   getBoardById(id: string): Board {
     return this.boards.find((board) => board.id === id);
   }
+  //return 값을 주지 않을때 void 활용
+  deleteBoardById(id: string): void {
+    this.boards = this.boards.filter((board) => board.id !== id);
+  }
+  updateBoardStatus(id: string, status: BoardStatus): Board {
+    //id를 가진 보드를 먼저 찾아서 그 보드의 값을 바꿔준다.
+    //보드에있던 상태가 들어온 값으로 바뀌어야한다.
+    const getboard = this.getBoardById(id);
+    getboard.status = status;
+    return getboard;
+  }
 }
