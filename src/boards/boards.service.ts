@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Board, BoardStatus } from './board.model';
 //id는 db에서 유니크한 값이므로 아직 db를 사용하지 않아 임시로 만들어 유니크값을준다
 import { v1 as uuid } from 'uuid';
+import { CreateBoardDto } from './dto/create-board.dto';
 
 @Injectable()
 export class BoardsService {
@@ -13,7 +14,8 @@ export class BoardsService {
     return this.boards; //boards배열에 들어있는 모든 값을 return(getallboards 함수 호출시)
   }
   //게시물 생성
-  createBoard(title: string, description: string) {
+  createBoard(createBoardDto: CreateBoardDto) {
+    const { title, description } = createBoardDto;
     const board: Board = {
       id: uuid(), //유니크한 값을 게시판의 아이디로 줄수 있다.
       title,
@@ -22,5 +24,9 @@ export class BoardsService {
     };
     this.boards.push(board);
     return board;
+  }
+
+  getBoardById(id: string): Board {
+    return this.boards.find((board) => board.id === id);
   }
 }
