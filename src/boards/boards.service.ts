@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Board, BoardStatus } from './board.model';
 //id는 db에서 유니크한 값이므로 아직 db를 사용하지 않아 임시로 만들어 유니크값을준다
 import { v1 as uuid } from 'uuid';
@@ -27,11 +27,17 @@ export class BoardsService {
   }
 
   getBoardById(id: string): Board {
-    return this.boards.find((board) => board.id === id);
+    const foundById = this.boards.find((board) => board.id === id);
+
+    if (!foundById) {
+      throw new NotFoundException(`Can't find Board with id${id}`);
+    }
+    return foundById;
   }
   //return 값을 주지 않을때 void 활용
   deleteBoardById(id: string): void {
-    this.boards = this.boards.filter((board) => board.id !== id);
+    const foundById = this.getBoardById(id);
+    this.boards = this.boards.filter((board) => board.id !== foundById.id);
   }
   updateBoardStatus(id: string, status: BoardStatus): Board {
     //id를 가진 보드를 먼저 찾아서 그 보드의 값을 바꿔준다.
