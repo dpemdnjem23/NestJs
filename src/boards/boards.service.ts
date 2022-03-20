@@ -8,25 +8,25 @@ import { Board } from './board.entity';
 
 @Injectable()
 export class BoardsService {
-  constructor(
-    @InjectRepository(BoardRepository)
-    private boardRepository: BoardRepository,
-  ) {}
+  constructor(private boardRepository: BoardRepository) {}
 
   //prvaite 를 사용하는 이유: 다른 컴포넌트에서 보드라는 배열 값을 수정을 할수 있는데,
   //그거를 차단하기 위함이다.
   //모든 게시물을 가져온다.
-  // getAllBoards(): Board[] {
-  //   return this.boards; //boards배열에 들어있는 모든 값을 return(getallboards 함수 호출시)
-  // }
+  async getAllBoards(): Promise<Board[]> {
+    return this.boardRepository.find(); //boards배열에 들어있는 모든 값을 return(getallboards 함수 호출시)
+  }
   async createBoard(createBoardDto: CreateBoardDto): Promise<Board> {
     const { title, description } = createBoardDto;
 
     const board = this.boardRepository.create({
-      title: title,
-      description: description,
+      title,
+      description,
       status: BoardStatus.PUBLIC,
     });
+    if (!board) {
+      throw new NotFoundException(`can't create`);
+    }
     await this.boardRepository.save(board);
     return board;
   }
@@ -59,16 +59,23 @@ export class BoardsService {
   //   }
   //   return foundById;
   // }
-  // //return 값을 주지 않을때 void 활용
-  // deleteBoardById(id: string): void {
-  //   const foundById = this.getBoardById(id);
-  //   this.boards = this.boards.filter((board) => board.id !== foundById.id);
-  // }
-  // updateBoardStatus(id: string, status: BoardStatus): Board {
-  //   //id를 가진 보드를 먼저 찾아서 그 보드의 값을 바꿔준다.
-  //   //보드에있던 상태가 들어온 값으로 바뀌어야한다.
-  //   const getboard = this.getBoardById(id);
-  //   getboard.status = status;
-  //   return getboard;
-  // }
+  //return 값을 주지 않을때 void 활용
+
+  async deleteBoard(id: number): Promise<void> {
+    const result = await this.boardRepository.delete(id);
+
+    //삭제되지 않는경우
+    if (result.affected === 0) {
+      throw new NotFoundException(`cant'fin board with ${id}`);
+    }
+
+    console.log(result);
+  }
+
+  async updateBoardStatus(id: number, status: BoardStatus): Promise<Board> {
+    const board = await this.getBoardById(id);
+    board.status = status;
+    await this.boardRepository.save(board);
+    return board;
+  }
 }
