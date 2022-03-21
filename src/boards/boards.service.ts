@@ -8,7 +8,10 @@ import { Board } from './board.entity';
 
 @Injectable()
 export class BoardsService {
-  constructor(private boardRepository: BoardRepository) {}
+  constructor(
+    @InjectRepository(BoardRepository)
+    private boardRepository: BoardRepository,
+  ) {}
 
   //prvaite 를 사용하는 이유: 다른 컴포넌트에서 보드라는 배열 값을 수정을 할수 있는데,
   //그거를 차단하기 위함이다.
@@ -16,6 +19,7 @@ export class BoardsService {
   async getAllBoards(): Promise<Board[]> {
     return this.boardRepository.find(); //boards배열에 들어있는 모든 값을 return(getallboards 함수 호출시)
   }
+  
   async createBoard(createBoardDto: CreateBoardDto): Promise<Board> {
     const { title, description } = createBoardDto;
 
@@ -24,9 +28,9 @@ export class BoardsService {
       description,
       status: BoardStatus.PUBLIC,
     });
-    if (!board) {
-      throw new NotFoundException(`can't create`);
-    }
+    // if (!board) {
+    //   throw new NotFoundException(`can't create`);
+    // }
     await this.boardRepository.save(board);
     return board;
   }
@@ -43,12 +47,12 @@ export class BoardsService {
   //   this.boards.push(board);
   //   return board;
   // }
-  async getBoardById(id: any): Promise<Board> {
-    const found = await this.boardRepository.findOne(id);
+  async getBoardById(id: number): Promise<Board> {
+    const found = await this.boardRepository.findOne({ where: { id } });
 
-    if (!found) {
-      throw new NotFoundException(`can't find`);
-    }
+    // if (!found) {
+    //   throw new NotFoundException(`can't find`);
+    // }
     return found;
   }
 

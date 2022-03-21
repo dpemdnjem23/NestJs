@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpException,
+  Logger,
   Param,
   ParseIntPipe,
   Patch,
